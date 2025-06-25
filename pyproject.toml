@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "mangadex-api"
+version = "0.1.0"
+description = "A Python wrapper for the MangaDex API with synchronous and asynchronous implementations."
+authors = ["Your Name <youremail@example.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/yourusername/mangadex-api"
+repository = "https://github.com/yourusername/mangadex-api"
+keywords = ["manga", "api", "wrapper", "mangadex"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+httpx = "^0.21.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2"
+pytest-asyncio = "^0.15.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
