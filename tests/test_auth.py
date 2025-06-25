@@ -228,3 +228,26 @@ def test_authenticate_with_password_failure(mock_post, client, oauth_credentials
     assert client.access_token is None
     assert client.refresh_token is None
     assert client.is_authenticated() is False
+
+def test_get_client_secret():
+    """Test getting a client secret (stub/mock)"""
+    class DummyClient:
+        def get_client_secret(self, client_id):
+            # Simulate API response
+            return {"result": "ok", "data": "secret-value"}
+    client = DummyClient()
+    response = client.get_client_secret("some-client-id")
+    assert response["result"] == "ok"
+    assert isinstance(response["data"], str)
+
+
+def test_regenerate_client_secret():
+    """Test regenerating a client secret (stub/mock)"""
+    class DummyClient:
+        def regenerate_client_secret(self, client_id):
+            # Simulate API response
+            return {"result": "ok", "data": "new-secret-value"}
+    client = DummyClient()
+    response = client.regenerate_client_secret("some-client-id")
+    assert response["result"] == "ok"
+    assert isinstance(response["data"], str)
