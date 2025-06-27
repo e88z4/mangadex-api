@@ -149,40 +149,58 @@ class MangaDexClient:
 
     # --- Chapter endpoints ---
     def create_chapter(self, chapter_data):
-        # Stub: Simulate chapter creation
-        return {"title": chapter_data.get("title", ""), "id": "stub-chapter-id"}
+        self.ensure_authenticated()
+        headers = self._get_auth_headers()
+        response = self.session.post(f'{self.BASE_URL}/chapter', json=chapter_data, headers=headers)
+        return response.json()
 
     def update_chapter(self, chapter_id, update_data):
-        # Stub: Simulate chapter update
-        return {"title": update_data.get("title", ""), "id": chapter_id}
+        self.ensure_authenticated()
+        headers = self._get_auth_headers()
+        response = self.session.put(f'{self.BASE_URL}/chapter/{chapter_id}', json=update_data, headers=headers)
+        return response.json()
 
     def delete_chapter(self, chapter_id):
-        # Stub: Simulate chapter deletion
-        return {"success": True, "id": chapter_id}
+        self.ensure_authenticated()
+        headers = self._get_auth_headers()
+        response = self.session.delete(f'{self.BASE_URL}/chapter/{chapter_id}', headers=headers)
+        return response.json()
 
     # --- Custom List endpoints ---
     def get_custom_list(self, list_id):
-        # Stub: Simulate getting a custom list
-        return {"id": list_id, "name": "Stub List"}
+        self.ensure_authenticated()
+        headers = self._get_auth_headers()
+        response = self.session.get(f'{self.BASE_URL}/list/{list_id}', headers=headers)
+        return response.json()
 
     # --- Group endpoints ---
     def get_group(self, group_id):
-        # Stub: Simulate getting a group
-        return {"id": group_id, "name": "Stub Group"}
+        self.ensure_authenticated()
+        headers = self._get_auth_headers()
+        response = self.session.get(f'{self.BASE_URL}/group/{group_id}', headers=headers)
+        return response.json()
 
     def create_group(self, group_data):
-        # Stub: Simulate group creation
-        return {"name": group_data.get("name", ""), "id": "stub-group-id"}
+        self.ensure_authenticated()
+        headers = self._get_auth_headers()
+        response = self.session.post(f'{self.BASE_URL}/group', json=group_data, headers=headers)
+        return response.json()
 
     def update_group(self, group_id, update_data):
-        # Stub: Simulate group update
-        return {"name": update_data.get("name", ""), "id": group_id}
+        self.ensure_authenticated()
+        headers = self._get_auth_headers()
+        response = self.session.put(f'{self.BASE_URL}/group/{group_id}', json=update_data, headers=headers)
+        return response.json()
 
     def delete_group(self, group_id):
-        # Stub: Simulate group deletion
-        return {"success": True, "id": group_id}
+        self.ensure_authenticated()
+        headers = self._get_auth_headers()
+        response = self.session.delete(f'{self.BASE_URL}/group/{group_id}', headers=headers)
+        return response.json()
 
     # --- User endpoints ---
     def delete_user(self, user_id):
-        # Stub: Simulate user deletion
-        return {"success": True, "id": user_id}
+        self.ensure_authenticated()
+        headers = self._get_auth_headers()
+        response = self.session.delete(f'{self.BASE_URL}/user/{user_id}', headers=headers)
+        return response.json()

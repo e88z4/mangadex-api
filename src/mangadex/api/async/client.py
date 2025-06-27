@@ -166,28 +166,19 @@ class MangaDexAsyncClient:
         await self._ensure_session()
         await self.ensure_authenticated()
         headers = self._get_auth_headers()
-        # Return a stub with expected keys for test_manga.py
-        return {
-            'id': manga_id,
-            'title': {'en': 'Stub Manga Title'},
-            'result': 'ok',
-            'data': {'id': manga_id, 'attributes': {'title': {'en': 'Stub Manga Title'}}}
-        }
+        async with self.session.get(f"{self.base_url}/manga/{manga_id}", headers=headers) as response:
+            return await response.json()
 
-    async def search_manga(self, title=None, limit=10, offset=0):
+    async def search_manga(self, title=None, limit=10, offset=0, **params):
         await self._ensure_session()
         await self.ensure_authenticated()
         headers = self._get_auth_headers()
-        # Return a stub list with expected keys for test_manga.py
-        return {
-            'result': 'ok',
-            'data': [
-                {'id': 'stub-id-1', 'attributes': {'title': {'en': title or 'Stub Manga Title'}}}
-            ],
-            'limit': limit,
-            'offset': offset,
-            'total': 1
-        }
+        query_params = {"limit": limit, "offset": offset}
+        if title:
+            query_params["title"] = title
+        query_params.update(params)
+        async with self.session.get(f"{self.base_url}/manga", params=query_params, headers=headers) as response:
+            return await response.json()
 
     async def create_manga(self, manga_data):
         await self._ensure_session()
@@ -260,30 +251,66 @@ class MangaDexAsyncClient:
             return await response.json()
 
     async def create_chapter(self, chapter_data):
-        return {"id": "stub-chapter-id", **chapter_data}
+        await self._ensure_session()
+        await self.ensure_authenticated()
+        headers = self._get_auth_headers()
+        async with self.session.post(f"{self.base_url}/chapter", json=chapter_data, headers=headers) as response:
+            return await response.json()
 
     async def delete_chapter(self, chapter_id):
-        return {"id": chapter_id, "deleted": True}
+        await self._ensure_session()
+        await self.ensure_authenticated()
+        headers = self._get_auth_headers()
+        async with self.session.delete(f"{self.base_url}/chapter/{chapter_id}", headers=headers) as response:
+            return await response.json()
 
     async def update_chapter(self, chapter_id, update_data):
-        return {"id": chapter_id, **update_data}
+        await self._ensure_session()
+        await self.ensure_authenticated()
+        headers = self._get_auth_headers()
+        async with self.session.put(f"{self.base_url}/chapter/{chapter_id}", json=update_data, headers=headers) as response:
+            return await response.json()
 
     async def get_custom_list(self, list_id):
-        return {"id": list_id, "name": "Stub List"}
+        await self._ensure_session()
+        await self.ensure_authenticated()
+        headers = self._get_auth_headers()
+        async with self.session.get(f"{self.base_url}/list/{list_id}", headers=headers) as response:
+            return await response.json()
 
     async def create_group(self, group_data):
-        return {"id": "stub-group-id", **group_data}
+        await self._ensure_session()
+        await self.ensure_authenticated()
+        headers = self._get_auth_headers()
+        async with self.session.post(f"{self.base_url}/group", json=group_data, headers=headers) as response:
+            return await response.json()
 
     async def delete_group(self, group_id):
-        return {"id": group_id, "deleted": True}
+        await self._ensure_session()
+        await self.ensure_authenticated()
+        headers = self._get_auth_headers()
+        async with self.session.delete(f"{self.base_url}/group/{group_id}", headers=headers) as response:
+            return await response.json()
 
     async def get_group(self, group_id):
-        return {"id": group_id, "name": "Stub Group"}
+        await self._ensure_session()
+        await self.ensure_authenticated()
+        headers = self._get_auth_headers()
+        async with self.session.get(f"{self.base_url}/group/{group_id}", headers=headers) as response:
+            return await response.json()
 
     async def update_group(self, group_id, update_data):
-        return {"id": group_id, **update_data}
+        await self._ensure_session()
+        await self.ensure_authenticated()
+        headers = self._get_auth_headers()
+        async with self.session.put(f"{self.base_url}/group/{group_id}", json=update_data, headers=headers) as response:
+            return await response.json()
 
     async def delete_user(self, user_id):
-        return {"id": user_id, "deleted": True}
+        await self._ensure_session()
+        await self.ensure_authenticated()
+        headers = self._get_auth_headers()
+        async with self.session.delete(f"{self.base_url}/user/{user_id}", headers=headers) as response:
+            return await response.json()
 
     # Additional methods for other API actions can be added here.
