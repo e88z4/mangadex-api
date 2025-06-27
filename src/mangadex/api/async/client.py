@@ -312,5 +312,42 @@ class MangaDexAsyncClient:
         headers = self._get_auth_headers()
         async with self.session.delete(f"{self.base_url}/user/{user_id}", headers=headers) as response:
             return await response.json()
+            
+    # --- At Home endpoints ---
+    async def get_chapter_server(self, chapter_id):
+        """
+        Get MangaDex@Home server URL for a chapter
+        
+        Args:
+            chapter_id: ID of the chapter
+            
+        Returns:
+            Server information including baseUrl, chapter hash and filenames
+        """
+        await self._ensure_session()
+        async with self.session.get(f"{self.base_url}/at-home/server/{chapter_id}") as response:
+            return await response.json()
+            
+    def get_chapter_image_urls(self, at_home_data, use_data_saver=False):
+        """
+        Construct image URLs from at-home API data
+        
+        Args:
+            at_home_data: Response from get_chapter_server
+            use_data_saver: Use data saver server if True (compressed images)
+            
+        Returns:
+            List of image URLs
+        """
+        base_url = at_home_data["baseUrl"]
+        chapter_hash = at_home_data["chapter"]["hash"]
+        
+        # Choose quality
+        key = "dataSaver" if use_data_saver else "data"
+        filenames = at_home_data["chapter"][key]
+        
+        # Construct URLs
+        server = "data-saver" if use_data_saver else "data"
+        return [f"{base_url}/{server}/{chapter_hash}/{filename}" for filename in filenames]
 
     # Additional methods for other API actions can be added here.
