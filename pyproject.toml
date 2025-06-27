@@ -8,6 +8,7 @@ readme = "README.md"
 homepage = "https://github.com/yourusername/mangadex-api"
 repository = "https://github.com/yourusername/mangadex-api"
 keywords = ["manga", "api", "wrapper", "mangadex"]
+packages = [{ include = "mangadex", from = "src" }]
 
 [tool.poetry.dependencies]
 python = "^3.7"
