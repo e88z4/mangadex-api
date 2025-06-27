@@ -41,7 +41,6 @@ Available API actions:
 """
 
 from .api.sync import *
-from .api.async_api import *
 from .models import *
 from .utils import *
 from .constants import *

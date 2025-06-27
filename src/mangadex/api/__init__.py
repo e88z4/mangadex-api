@@ -1,9 +1,12 @@
 # File: /mangadex-api/mangadex-api/src/mangadex/api/__init__.py
 
-from .sync.client import MangaDexClient as SyncClient
-from .async_api.client import MangaDexAsyncClient as AsyncClient
+from .sync.client import MangaDexClient
+from importlib import import_module
+
+# Workaround for reserved keyword 'async' in import
+MangaDexAsyncClient = import_module('mangadex.api.async.client').MangaDexAsyncClient
 
 __all__ = [
-    'SyncClient',
-    'AsyncClient',
+    'MangaDexClient',
+    'MangaDexAsyncClient',
 ]

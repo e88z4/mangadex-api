@@ -11,8 +11,7 @@ These examples demonstrate how to:
 
 import asyncio
 import time
-from mangadex.api.sync.client import MangaDexClient
-from mangadex.api.async_api.client import MangaDexAsyncClient
+from mangadex.api import MangaDexClient, MangaDexAsyncClient
 
 # Example of using the synchronous client with OAuth2
 def sync_example():

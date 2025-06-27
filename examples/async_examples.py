@@ -1,7 +1,7 @@
 # async_examples.py
 
 import asyncio
-from mangadex.api.async_api.client import MangaDexAsyncClient
+from mangadex.api.async.client import MangaDexAsyncClient
 
 async def main():
     # Create an instance of the AsyncClient

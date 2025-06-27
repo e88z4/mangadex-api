@@ -3,7 +3,7 @@
 import unittest
 import asyncio
 from mangadex.api.sync.client import MangaDexClient
-from mangadex.api.async_api.client import MangaDexAsyncClient
+from mangadex.api import MangaDexAsyncClient
 
 class TestGroupAPI(unittest.TestCase):
     def setUp(self):

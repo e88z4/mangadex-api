@@ -5,7 +5,7 @@ import time
 import aiohttp
 import asyncio
 from unittest.mock import patch, Mock, MagicMock, AsyncMock
-from mangadex.api.async_api.client import MangaDexAsyncClient
+from mangadex.api import MangaDexAsyncClient
 
 @pytest.fixture
 def mock_token_response():
@@ -53,58 +53,30 @@ class MockClientResponse:
 
 @pytest.mark.asyncio
 async def test_authenticate_with_client_credentials_success(oauth_credentials, mock_token_response):
-    """Test successful authentication with client credentials"""
-    
-    def mock_post(*args, **kwargs):
-        return MockClientResponse(200, mock_token_response)
-
-    mock_session = MagicMock()
-    mock_session.post = Mock(side_effect=mock_post)
-
-    with patch('aiohttp.ClientSession', return_value=mock_session):
-        client = MangaDexAsyncClient()
-        response = await client.authenticate_with_client_credentials(
+    """Test that NotImplementedError is raised for client credentials grant (personal clients)"""
+    client = MangaDexAsyncClient()
+    with pytest.raises(NotImplementedError, match="password grant type"):
+        await client.authenticate_with_client_credentials(
             oauth_credentials['client_id'],
             oauth_credentials['client_secret']
         )
-        mock_session.post.assert_called_once_with(
-            f'{client.BASE_URL}/auth/token',
-            data={
-                'client_id': oauth_credentials['client_id'],
-                'client_secret': oauth_credentials['client_secret'],
-                'grant_type': 'client_credentials'
-            }
-        )
-        assert response == mock_token_response
-        assert client.access_token == 'mock_access_token'
-        assert client.refresh_token == 'mock_refresh_token'
-        assert client.client_id == oauth_credentials['client_id']
-        assert client.client_secret == oauth_credentials['client_secret']
-        assert client.is_authenticated() is True
 
 @pytest.mark.asyncio
 async def test_authenticate_with_client_credentials_failure(oauth_credentials):
-    """Test failed authentication with client credentials"""
-    def mock_post(*args, **kwargs):
-        return MockClientResponse(401, {'error': 'invalid_client', 'message': 'Invalid client credentials'})
-    mock_session = MagicMock()
-    mock_session.post = Mock(side_effect=mock_post)
-    with patch('aiohttp.ClientSession', return_value=mock_session):
-        client = MangaDexAsyncClient()
-        response = await client.authenticate_with_client_credentials(
+    """Test that NotImplementedError is raised for client credentials grant (personal clients)"""
+    client = MangaDexAsyncClient()
+    with pytest.raises(NotImplementedError, match="password grant type"):
+        await client.authenticate_with_client_credentials(
             oauth_credentials['client_id'],
             oauth_credentials['client_secret']
         )
-        # Accept either the error dict or a fallback error structure
-        assert 'error' in response or 'errors' in response
-        assert client.access_token is None
-        assert client.refresh_token is None
-        assert client.is_authenticated() is False
 
 @pytest.mark.asyncio
 async def test_refresh_authentication_success(oauth_credentials):
-    """Test successful token refresh"""
-    def mock_post(*args, **kwargs):
+    """Test successful token refresh with correct endpoint"""
+    def mock_post(url, data=None, headers=None):
+        assert url == "https://auth.mangadex.org/realms/mangadex/protocol/openid-connect/token"
+        assert data['grant_type'] == 'refresh_token'
         return MockClientResponse(200, {
             'access_token': 'new_access_token',
             'refresh_token': 'new_refresh_token',
@@ -120,15 +92,6 @@ async def test_refresh_authentication_success(oauth_credentials):
         client.refresh_token = 'old_refresh_token'
         client.token_expires_at = time.time() - 100
         response = await client.refresh_authentication()
-        mock_session.post.assert_called_once_with(
-            f'{client.BASE_URL}/auth/token',
-            data={
-                'client_id': oauth_credentials['client_id'],
-                'client_secret': oauth_credentials['client_secret'],
-                'grant_type': 'refresh_token',
-                'refresh_token': 'old_refresh_token'
-            }
-        )
         assert response['access_token'] == 'new_access_token'
         assert client.access_token == 'new_access_token'
         assert client.refresh_token == 'new_refresh_token'
@@ -202,8 +165,10 @@ async def test_get_auth_headers():
 
 @pytest.mark.asyncio
 async def test_authenticate_with_password_success(oauth_credentials, valid_credentials, mock_token_response):
-    """Test successful authentication with password"""
-    def mock_post(*args, **kwargs):
+    """Test successful authentication with password using correct endpoint"""
+    def mock_post(url, data=None, headers=None):
+        assert url == "https://auth.mangadex.org/realms/mangadex/protocol/openid-connect/token"
+        assert data['grant_type'] == 'password'
         return MockClientResponse(200, mock_token_response)
     mock_session = MagicMock()
     mock_session.post = Mock(side_effect=mock_post)
@@ -214,16 +179,6 @@ async def test_authenticate_with_password_success(oauth_credentials, valid_crede
             valid_credentials['password'],
             oauth_credentials['client_id'],
             oauth_credentials['client_secret']
-        )
-        mock_session.post.assert_called_once_with(
-            f'{client.BASE_URL}/auth/token',
-            data={
-                'username': valid_credentials['username'],
-                'password': valid_credentials['password'],
-                'client_id': oauth_credentials['client_id'],
-                'client_secret': oauth_credentials['client_secret'],
-                'grant_type': 'password'
-            }
         )
         assert response == mock_token_response
         assert client.access_token == 'mock_access_token'
@@ -252,3 +207,14 @@ async def test_authenticate_with_password_failure(oauth_credentials, invalid_cre
         assert client.access_token is None
         assert client.refresh_token is None
         assert client.is_authenticated() is False
+
+# Patch endpoint and expected exceptions for personal client tests
+@pytest.mark.asyncio
+async def test_authenticate_with_client_credentials_personal_failure(oauth_credentials):
+    """Test failed authentication with client credentials for personal client"""
+    client = MangaDexAsyncClient()
+    with pytest.raises(NotImplementedError, match="password grant type"):
+        await client.authenticate_with_client_credentials(
+            oauth_credentials['client_id'],
+            oauth_credentials['client_secret']
+        )

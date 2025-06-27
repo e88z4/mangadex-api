@@ -26,23 +26,31 @@ pip install -r requirements.txt
 ### Synchronous Example
 
 ```python
-from mangadex.api.sync.auth import login
-response = login(username='your_username', password='your_password')
-print(response)
+from mangadex.api import MangaDexClient
+client = MangaDexClient()
+# Authenticate with OAuth2 client credentials
+auth_response = client.authenticate_with_client_credentials(client_id='your_client_id', client_secret='your_client_secret')
+print(auth_response)
 ```
 
 ### Asynchronous Example
 
 ```python
 import asyncio
-from mangadex.api.async.auth import login
+from mangadex.api import MangaDexAsyncClient
 
 async def main():
-    response = await login(username='your_username', password='your_password')
-    print(response)
+    client = MangaDexAsyncClient()
+    auth_response = await client.authenticate_with_client_credentials(client_id='your_client_id', client_secret='your_client_secret')
+    print(auth_response)
+    await client.close()
 
 asyncio.run(main())
 ```
+
+## Examples
+
+See the `examples/` directory for more comprehensive usage, including OAuth2 password flow, manga operations, and more.
 
 ## Contributing
 

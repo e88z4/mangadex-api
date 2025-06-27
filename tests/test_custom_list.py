@@ -3,7 +3,7 @@
 import pytest
 import pytest_asyncio
 from mangadex.api.sync.client import MangaDexClient
-from mangadex.api.async_api.client import MangaDexAsyncClient
+from mangadex.api import MangaDexAsyncClient
 
 @pytest.fixture
 def sync_client():
